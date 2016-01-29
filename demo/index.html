@@ -1,0 +1,134 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>cloudstitch-spreadsheet Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../polymer/polymer.html">
+    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../cloudstitch-spreadsheet.html">
+
+  </head>
+  <body unresolved>
+
+    <template is="dom-bind">
+    <style>
+      .ip {
+        display: inline-block;
+        width: 200px;
+      }
+    </style>
+     <p>An example of <code>&lt;cloudstitch-spreadsheet&gt;</code>:</p>
+ 
+      <paper-input class="ip" label="username" value="{{username}}" default="project-templates"></paper-input>
+      <paper-input class="ip" label="appname" value="{{appname}}" default="chord-diagram" ></paper-input>
+
+      <br />
+      <paper-input class="ip" label="label" value="{{label}}" default="chordDiagramSheet" ></paper-input>
+      <paper-input class="ip" label="worksheet" value="{{worksheet}}" ></paper-input>
+      <paper-input class="ip" label="projection" value="{{projection}}" default="items" ></paper-input>
+      
+      <br />
+
+      <paper-input class="ip" label="globalkey" value="{{globalkey}}" ></paper-input>
+      <paper-input class="ip" label="rowkey" value="{{rowkey}}" ></paper-input>
+      <br />
+
+      <paper-input class="ip" label="proto" value="{{proto}}" default="http" ></paper-input>
+      <paper-input class="ip" default="ted.studymonk.com:3001" label="domain" value="{{domain}}" ></paper-input>      
+      <br />
+
+      <h2>GET</h2>
+      <button id="loadButton">GET</button>
+
+      <cloudstitch-spreadsheet id="ss" user="{{username}}" app="{{appname}}" label="{{label}}" worksheet="{{worksheet}}" globalkey="{{globalkey}}" rowkey="{{rowkey}}" projection="{{projection}}" domain="{{domain}}" proto="{{proto}}"></cloudstitch-spreadsheet>
+      
+      <pre id="results"></pre>
+
+      <h2>POST</h2>
+      JSON Here:<br />
+      <textarea id="postJson" rows="8" cols="80">
+        {
+          "FirstName": "Ted"
+        }
+
+      </textarea><br />
+      <pre id="postResults"></pre>
+      <button id="postButton">POST</button>
+
+      <h2>PUT</h2>
+      JSON Here:<br />
+      <textarea id="putJson" rows="8" cols="80">
+        {
+          "FirstName": "Ted"
+        }
+
+      </textarea><br />
+      <pre id="putResults"></pre>
+      <button id="putButton">PUT</button>
+
+      <script>
+        var ss = document.querySelector('#ss');
+        ss.addEventListener('spreadsheet-loaded', function() {
+          document.querySelector('#results').innerHTML = JSON.stringify(ss.content);
+        });
+
+        document.querySelector('#loadButton').addEventListener('click', function() {
+          ss.load();
+        }); 
+
+        document.querySelector('#postButton').addEventListener('click', function() {
+          var obj = JSON.parse(document.querySelector('#postJson').value);
+          ss.append(obj,
+            function() {
+              document.querySelector('#postResults').innerHTML = "Success";
+            },
+            function() {
+              document.querySelector('#postResults').innerHTML = "Error";
+            },
+            function() {
+              document.querySelector('#postResults').innerHTML = "Loading";
+            }
+          );
+        }); 
+
+        document.querySelector('#putButton').addEventListener('click', function() {
+          var obj = JSON.parse(document.querySelector('#putJson').value);
+          ss.update(obj,
+            function() {
+              document.querySelector('#putResults').innerHTML = "Success";
+            },
+            function() {
+              document.querySelector('#putResults').innerHTML = "Error";
+            },
+            function() {
+              document.querySelector('#putResults').innerHTML = "Loading";
+            }
+          );
+        }); 
+
+        var es = document.getElementsByClassName('ip');
+        for (var i = 0; i < es.length; i++) {
+          try {
+            var d = es[i].attributes.getNamedItem('default').value;
+            es[i].value = d;
+          } catch(e) {
+          }
+        }
+      </script>
+
+    </template>
+
+
+  </body>
+</html>

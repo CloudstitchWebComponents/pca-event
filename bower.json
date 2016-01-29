@@ -1,0 +1,32 @@
+{
+  "name": "cloudstitch-spreadsheet",
+  "version": "2.0.1",
+  "authors": [
+    "Ted Benson <ted@cloudstitch.com>"
+  ],
+  "description": "An element providing access to a Cloudstitch Spreadsheet.",
+  "keywords": [
+    "cloudstitch",
+    "web-component",
+    "polymer",
+    "gsheet",
+    "google-spreadsheet",
+    "spreadsheet"
+  ],
+  "main": "cloudstitch-spreadsheet.html",
+  "license": "BSD",
+  "homepage": "https://github.com/CloudstitchWebComponents/cloudstitch-spreadsheet/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "iron-ajax": "PolymerElements/iron-ajax#~1.1.1",
+    "polymer": "Polymer/polymer#^1.2.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "paper-input": "PolymerElements/paper-input",
+    "web-component-tester": "*"
+  }
+}

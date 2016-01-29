@@ -1,0 +1,221 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+
+<!--
+Example:
+
+    <pca-event></pca-event>
+
+@group Cloudstitch
+@element pca-event
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="pca-event">
+  <template>
+    <style>
+      .widget {
+        color: #333;
+      }
+      
+      p {
+        line-height: 1.7;
+        margin: 0 0 10px;
+        font-size: 1rem;
+      }           
+      
+      h1 {
+        margin-top: 0;
+        font-size: 36px;
+        margin-bottom: 10px;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.1;
+        color: inherit;
+      }
+      
+      h2 {
+        box-sizing: border-box;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 30px;        
+        font-family: inherit;
+        line-height: 1.1;
+        color: inherit;  
+      }
+      
+      h3 {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 20px 0 10px;
+        line-height: 1.1;
+      }
+      
+      dl {
+        margin: 0;
+        display: block;
+      }
+
+      dt {
+        text-align: left;
+        zoom: 1;
+        font-size: 14px;        
+      }
+      
+      dd {
+        float: none;
+        line-height: 1.5;
+        list-style: none;
+        margin: 0 0 10px;
+        padding: 0;
+        box-sizing: border-box;
+        text-align: left;
+      }
+      
+      .block {
+        background: #fafafa;
+        border: 1px solid #eee;
+        margin: 30px 0; 
+      }
+      .detail-block {
+        box-sizing: border-box;
+        display: inline-block;
+        float: left;
+        margin: 0 0 20px;
+        padding: 0 4%;
+        text-align: left;
+        vertical-align: top;
+        width: 33.3333%;
+        zoom: 1;
+      }
+    </style>
+    <h1>{{title}}</h1>
+    <h2>
+      {{month}} {{day}}
+      <span hidden$={{!startTime}}>
+        {{startTime}}
+        <span hidden$={{!endTime}}>
+          - {{endTime}}
+        <span>
+      </span>
+    </h2>
+    <div>
+      {{description}}
+    </div>
+    <paper-button raised>RSVP</paper-button>
+    <paper-button raised class="cal" href="{{outlookLink}}" on-tap="goHref">+ Google Calendar</a>
+    <paper-button raised class="cal" href="{{googleCalLink}}" on-tap="goHref">+ iCal / Outlook</a>
+    <hr />
+    <div class="details block">
+      <div class="detail-block">
+        <h3>Details</h3>
+        <dl>
+          <dt>Date:</dt>
+          <dd>{{dateStr}}</dd>
+          <dt>Time:</dt>
+          <dd>{{timeStr}}<dd>
+          <dt>Event Category:</dt>
+          <dd>{{category}}<dd>
+        </dl>
+      </div>
+      <div class="detail=block">
+        <h3>Organizer</h3>
+        <dl>
+          <dt>Phone:</dt>
+          <dd>{{organizerPhone}}</dd>
+        </dl>
+      </div>       
+    </div>
+    <div class="block">
+      <div class="detail-block">
+        <h3>Venue</h3>
+        <p>{{venueName}}<p>
+        <p>{{venueStreet}}<br />{{venueCity}}, {{venueState}} {{venueZip}}</p>
+        <a href='{{googleMapLink}}'>Google Map</a>          
+      </div>
+      <div class="detail-block">
+        <google-map></google-map>
+      </div>
+    </div>
+
+    <section class="rsvp-form">
+      <paper-input label="First Name"></paper-input>
+      <paper-input label="Last Name"></paper-input>
+      <paper-input label="Email"></paper-input>
+      <paper-input label="Phone"></paper-input>
+      <paper-input label="Business"></paper-input>
+      <paper-input label="Your Title"></paper-input>
+      <span>Not a PCA Member</span>
+      <span>PCA Member</span>
+      <span>Board Member</span>
+      <paper-button id="btn-attending" on-click="rsvp">Attending</paper-button>
+      <paper-button id="btn-not-attending" on-click="rsvp">Not Attending</paper-button>
+    </section>
+
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'pca-event',
+
+      properties: {       
+        title: { type: String },
+        month: { type: String },
+        day: { type: String },
+        startTime: { type: String },
+        endTime: { type: String },
+        description: { type: String },
+        organizerPhone: { type: String },
+        category: { type: String },
+        venueName: { type: String },
+        venueStreet: { type: String },
+        venueCity: { type: String },
+        venueState: { type: String },
+        venueZip: { type: String },
+
+        user: { type: String },
+        app: {type: String },
+        label: {type: String},
+        worksheet: {type: String},
+                
+        dateStr: { type: String, computed: 'computeDateStr(month, day)' },
+        timeStr: { type: String, computed: 'computeTimeStr(startTime, endTime)' },
+        googleMapLink: { type: String, computed: 'computeGoogleMapLink(venueName, venueStreet, venueCity, venueState, venueZip)' },
+        outlookLink: { type: String, computed: 'computeOutlookLink()' },
+        googleCalLink: { type: String, computed: 'computeGoogleCalLink()' },
+      },
+      
+      computeDateStr: function(month, day) {
+        return month + ' ' + day;
+      },
+
+      computeTimeStr: function(startTime, endTime) {
+        return startTime + ' - ' + endTime;
+      },
+       
+      computeGoogleMapLink: function(venueName, venueStreet, venueCity, venueState, venueZip) {
+        
+      },
+
+      computeGoogleCalLink: function() {
+        
+      },
+      
+      computeOutlookLink: function() {
+        
+      },
+      
+      goHref: function() {
+        
+      },
+      
+      rsvpClick: function() {
+        
+      }
+
+    });
+
+  </script>
+</dom-module>
