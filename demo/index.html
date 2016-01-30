@@ -6,25 +6,16 @@
     <title>pca-event Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../../polymer/polymer.html">
-    <link rel="import" href="../pca-event.html">
+    <link rel="import" href="../pca-event-browser.html">
 
   </head>
   <body unresolved>
-    <pca-event
-      title="Event"
-      date="1/2/2014",
-      start-time="11:00:00 PM",
-      description="Come to our awesome event",
-      organizer-phone="123-123-1234",
-      category="Misc Events",
-      venue-name="Gensler",
-      venue-street="201 E Washington, Suite 750",
-      venue-city="Phoenix",
-      venue-state="AZ",      
-      user="ted",
-      app="v1-post",
+    <pca-event-browser
+      user="pca",
+      app="event-list",
       label="sheet",
-      worksheet="rsvps"
+      event-workshet="Events"
+      rsvp-worksheet="RSVPs"
     ></pca-event>
   </body>
 </html>

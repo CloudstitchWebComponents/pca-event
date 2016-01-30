@@ -118,7 +118,7 @@ Example:
       }
       
       #rsvp {
-        min-width: 40%;
+        min-width: 60%;
       }
       
       #rsvp h3 {
@@ -221,10 +221,16 @@ Example:
         <input type="hidden" name="RSVPDate" value$="{{currentDate}}" />
         <input type="hidden" name="RSVPTime" value$="{{currentTime}}" />
 
-        <paper-input name="PersonFirstName" label="First Name"></paper-input>
-        <paper-input name="PersonLastName" label="Last Name"></paper-input>
-        <paper-input name="PersonEmail" label="Email"></paper-input>
-        <paper-input name="PersonPhone" label="Phone"></paper-input>
+        <div class="row">
+          <div class="col-sm-6 col-xs-12"><paper-input name="PersonFirstName" label="First Name"></paper-input></div>
+          <div class="col-sm-6 col-xs-12"><paper-input name="PersonLastName" label="Last Name"></paper-input></div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-6 col-xs-12"><paper-input name="PersonEmail" label="Email"></paper-input></div>
+          <div class="col-sm-6 col-xs-12"><paper-input name="PersonPhone" label="Phone"></paper-input></div>
+        </div>
+        
         <paper-input name="PersonBusiness" label="Business"></paper-input>
         <paper-input name="PersonTitle" label="Your Title"></paper-input>
         <input type="hidden" name="PersonMembershipStatus" value$="{{membershipstatus}}" />

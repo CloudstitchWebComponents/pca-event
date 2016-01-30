@@ -79,7 +79,7 @@ Example:
               </p>                 
             </div>
             <p>{{item.description}}</p>
-            <a href$="#item={{item.ID}}" data-event$="{{item.ID}}" on-tap="showEvent">Find out more »</a>
+            <a href$="#item={{item.ID}}" data-event$="{{item.EventID}}" on-tap="showEvent">Find out more »</a>
           </template>
         </template>
       </div>
@@ -99,7 +99,8 @@ Example:
         month: {type: Number, value: 0},
         year: {type: Number, value: 0},
         events: {type: Array},
-        searchResults: {type: Array, computed: 'computeSearchResults(events, year, month, search)'}
+        datedResults: {type: Array, computed: 'computeDatedResults(events)'},
+        searchResults: {type: Array, computed: 'computeSearchResults(datedResults, year, month, search)'}
       },
       
       ready: function() {
@@ -115,7 +116,7 @@ Example:
       showEvent: function(e) {
         this.fire('show-event', {id: e.target.getAttribute('data-event')});
       },
-      
+            
       _item: function(item) {
         var start = this.computeMoment(item.Date, item.StartTime);
         var fish = this.computeMoment(item.Date, item.EndTime);
@@ -127,28 +128,100 @@ Example:
         item.DateString = dateString;
         return item;
       },
+
+      computeDatedResults: function(events) {
+        var ret = [];
+        for (var i = 0; i < events.length; i++) {  
+          if (! events[i].EventName) {
+            continue;
+          }        
+          try {
+            if (events[i].EventStartTime) {
+              events[i].StartMoment = moment(events[i].EventDate + ' ' + events[i].EventStartTime, 'MM/DD/YYYY hh:mm:ss a');          
+            } else {
+              events[i].StartMoment = moment(events[i].EventDate, 'MM/DD/YYYY');                      
+            }
+            if (events[i].EventEndTime) {
+              events[i].EndMoment = moment(events[i].Date + ' ' + events[i].EventEndTime, 'MM/DD/YYYY hh:mm:ss a');          
+            } else {
+              events[i].EndMoment = events[i].EventStartMoment;            
+            }
+            ret.push(events[i]);            
+          } catch(ex) {
+            console.log("Could not parse dates of ", events[i]);    
+          }
+        }
+                     
+        ret.sort(function(a, b) {
+          if (a.StartMoment < b.StartMoment) {
+            return -1;
+          }
+          if (a.StartMoment > b.StartMoment) {
+            return 1;
+          }
+          return 0;          
+        });        
+
+        return ret;
+      },
       
       computeSearchResults: function(events, year, month, search) {
-        console.log("Compute");
-               
-        return [
-          {
-            name: "Foo",
-            items: [
-              this._item({
-                ID: 4,
-                Title: "Hi",
-                Date: "1/20/2015",
-                StartTime: '9:00 PM'
-              })
-            ]
-          },
-          {
-            name: "Bar",
-            items: []
-          }
-        ];
+        var results = events;
+        var ret = [];
+        var curBlock = null;
+        var curBlockName = null;        
+        var currentBlock = null;         
+        if (search && search.length) {
+          search = search.toLowerCase();
+        }
         
+        var passesSearch = true;
+        for (var i = 0; i < results.length; i++) {
+          // See if we have a event/year match
+          var passesYear = true;
+          if (year && month && (year > 0) && (month > 0)) {
+            try {
+              if (parseInt(results[i].StartMoment.format('YYYY')) != year) {
+                passesYear = false;
+              }
+              if (parseInt(results[i].StartMoment.format('MM')) != month) {
+                passesYear = false;
+              }                            
+            } catch(ex) {
+              passesYear = false;
+            }
+          }
+                   
+          if (! passesYear) {
+            continue;
+          }
+          
+          // See if it passes results.
+          if (search && search.length) {
+            passesSearch = false;
+            for (var prop in results[i]) {
+              if (results[i][prop].toString().toLowerCase().indexOf(search) >= 0) {
+                passesSearch = true;                
+              }
+            }
+          }
+          
+          if (! passesSearch) {
+            continue;
+          }
+
+          var blockName = results[i].StartMoment.format('MMMM YYYY');
+          if (blockName != curBlockName) {
+            curBlockName = blockName;
+            curBlock = {
+              name: curBlockName,
+              items: []              
+            }
+            ret.push(curBlock);
+          }
+          curBlock.items.push(results[i])         
+        }
+        return ret;        
       }
                         
     });

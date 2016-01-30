@@ -10,6 +10,9 @@
       },
       
       computeDateStr: function(startMoment) {
+        if (! startMoment) {
+          return '';
+        }
         return startMoment.format("MMM Do");
       },
 
@@ -22,6 +25,9 @@
       },
                       
       _timeStr: function(m) {
+        if (!m) {
+          return '';
+        }
         if (m.format('mm') == '00') {
           return m.format('ha');          
         } else {
@@ -34,6 +40,9 @@
       },
 
       computeGoogleCalLink: function(title, description, fullAddress, startMoment, endMoment) {
+        if (!startMoment) {
+          return '';
+        }
          var start = startMoment.format('YYYYMMDDTHHmm00')
          var finish;
          if (endMoment) {
