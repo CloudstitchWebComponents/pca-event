@@ -1,0 +1,157 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-menu/paper-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="stylesheet" href="./bootstrap-grid.min.css" />
+<script src="../moment/moment.js"></script>
+
+<link rel="import" href="./month-picker.html">
+<link rel="import" href="./filter-bar.html">
+<link rel="import" href="./event-list.html">
+
+<!--
+Example:
+
+    <event-list></event-list>
+
+@group Cloudstitch
+@element event-list
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="event-list">
+  <template>
+    <style>          
+      .category-name-wrapper {
+        text-transform: none;
+        font-size: 24px;
+        margin: 1.25em auto;
+        text-align: center;
+        position: relative;
+        background-color: transparent;
+        z-index: 1;        
+        padding: 6px 10px;
+        display: block;
+        font-weight: 700;
+      }
+      .category-name-wrapper:after {
+        content: '';
+        border-bottom: 1px solid #c2c2c2;
+        height: 1px;
+        width: 100%;
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        z-index: -1;        
+      }
+      .category-name-wrapper span {
+        background-color: #fff;
+        padding: 0 7.5%;
+      }
+      .meta {
+        font-style: italic;
+        font-size: 0.9em;
+      }
+      .addr-row {
+        display: block;
+      }
+     
+    </style>
+    <filter-bar id="filterBar"></filter-bar>
+    
+    <div class="events">
+      <div class="list-view">
+        <template is="dom-repeat" items="{{searchResults}}" as="category">       
+          <span class="category-name-wrapper"><span>{{category.name}}</span></span>
+          <template is="dom-repeat" items="{{category.items}}" as="item">       
+            <h2>{{item.Title}}</h2>
+            <div class="meta">
+              <p>{{item.DateString}} {{item.TimeString}}</p>
+              <p>
+                 <span class="addr-row">{{item.VenueName}}</span>
+                 <span class="addr-row">{{item.VenueStreet}}</span>
+                 <span class="addr-row">{{item.VenueCity}} {{item.VenueState}} {{item.VenueZip}}</span>
+                 <a class="addr-row" href="{{item.GMapLink}}">GMap</a>
+              </p>                 
+            </div>
+            <p>{{item.description}}</p>
+            <a href$="#item={{item.ID}}" data-event$="{{item.ID}}" on-tap="showEvent">Find out more »</a>
+          </template>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'event-list',
+           
+      behaviors: [EventBehavior],
+      
+      properties: {       
+        search: {type: String, value: ''},
+        month: {type: Number, value: 0},
+        year: {type: Number, value: 0},
+        events: {type: Array},
+        searchResults: {type: Array, computed: 'computeSearchResults(events, year, month, search)'}
+      },
+      
+      ready: function() {
+        var self = this;
+        this.events = [];
+        this.$.filterBar.addEventListener('filter-changed', function(a) {
+          self.search = a.detail.search;
+          self.month = parseInt(a.detail.month);
+          self.year = parseInt(a.detail.year);
+        })
+      },
+      
+      showEvent: function(e) {
+        this.fire('show-event', {id: e.target.getAttribute('data-event')});
+      },
+      
+      _item: function(item) {
+        var start = this.computeMoment(item.Date, item.StartTime);
+        var fish = this.computeMoment(item.Date, item.EndTime);
+        var timeString = this.computeTimeStr(start, fish);
+        var dateString = this.computeDateStr(start);
+        var fullAddress = this.computeFullAddress(item.VenueName, item.VenueStreet, item.VenueCity, item.VenueState, item.VenueZip);
+        item.GMapLink = this.computeGoogleMapLink(fullAddress);
+        item.TimeString = timeString;
+        item.DateString = dateString;
+        return item;
+      },
+      
+      computeSearchResults: function(events, year, month, search) {
+        console.log("Compute");
+               
+        return [
+          {
+            name: "Foo",
+            items: [
+              this._item({
+                ID: 4,
+                Title: "Hi",
+                Date: "1/20/2015",
+                StartTime: '9:00 PM'
+              })
+            ]
+          },
+          {
+            name: "Bar",
+            items: []
+          }
+        ];
+        
+      }
+                        
+    });
+
+  </script>
+</dom-module>

@@ -1,0 +1,97 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-menu/paper-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="stylesheet" href="./bootstrap-grid.min.css" />
+<script src="../moment/moment.js"></script>
+
+<link rel="import" href="./month-picker.html">
+
+<!--
+Example:
+
+    <pca-event></pca-event>
+
+@group Cloudstitch
+@element pca-event
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="filter-bar">
+  <template>
+    <style>      
+
+    
+      .filter-bar {
+        background-color: #f5f5f5;
+        padding: 10px;        
+      }     
+      
+      paper-input {
+        display: inline;        
+      } 
+      
+      paper-dropdown-menu {
+        margin-top: 10px;
+        width: 100%;
+      }
+      
+      .blue {
+        background-color: #21759b;
+        color: white;
+        margin-top: 33px;
+      }
+    </style>
+    <div class="filter-bar">
+      <div class="row">
+        <div class="col-sm-5 col-xs-12">
+          <paper-dropdown-menu label$="{{monthLabel}}" on-tap="openMonthPicker">
+          </paper-dropdown-menu>
+          <month-picker id="monthPicker" month="{{month}}" year="{{year}}"></month-picker>
+        </div>
+        <div class="col-sm-5 col-xs-12">
+          <paper-input value="{{search}}" label="Search"></paper-input>
+        </div>
+        <div class="col-sm-2 col-xs-12">
+          <paper-button on-tap="updateFilter" raised class="blue">Find Events</paper-button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'filter-bar',
+           
+      properties: {       
+        search: { type: String, value: '' },
+        month: { type: Number, value: 0 },
+        year: { type: Number },
+        monthLabel: { type: String, computed: 'makeMonthLabel(month, year)' }
+      },
+       
+      openMonthPicker: function() {
+        this.$.monthPicker.pressed = true;
+      },
+      
+      updateFilter: function() {
+        this.fire('filter-changed', {search: this.search, month: this.month, year: this.year});
+      },
+      
+      makeMonthLabel: function(month, year) {
+        if (month == 0) {
+          return "Events in..."
+        } else {
+          return "Events in " + this.$.monthPicker.monthString + ' ' + year;
+        }
+      }         
+           
+    });
+
+  </script>
+</dom-module>

@@ -1,0 +1,60 @@
+<script>
+    EventBehavior = {
+      
+      computeMoment: function(date, endTime) {
+        if (endTime) {
+          return moment(date + ' ' + endTime, 'MM/DD/YYYY hh:mm:ss a');          
+        } else {
+          return null;
+        }
+      },
+      
+      computeDateStr: function(startMoment) {
+        return startMoment.format("MMM Do");
+      },
+
+      computeTimeStr: function(startMoment, endMoment) {        
+        if (endMoment) {
+          return this._timeStr(startMoment) + ' - ' + this._timeStr(endMoment)
+        } else {
+          return this._timeStr(startMoment);
+        }
+      },
+                      
+      _timeStr: function(m) {
+        if (m.format('mm') == '00') {
+          return m.format('ha');          
+        } else {
+          return m.format('h:mma');                    
+        }
+      },
+             
+      computeFullAddress: function(venueName, venueStreet, venueCity, venueState, venueZip) {
+        return venueName + ", " + venueStreet + ", " + venueCity + ", " + venueState + " " + venueZip;  
+      },
+
+      computeGoogleCalLink: function(title, description, fullAddress, startMoment, endMoment) {
+         var start = startMoment.format('YYYYMMDDTHHmm00')
+         var finish;
+         if (endMoment) {
+           finish = endMoment.format('YYYYMMDDTHHmm00');
+         } else {
+           finish = start;
+         }         
+         var url = "http://www.google.com/calendar/event?action=TEMPLATE" +
+           "&text=" + encodeURIComponent(title) +
+           "&dates=" + start + "/" + finish + 
+           "&details=" + encodeURIComponent(description) +
+           "&location=" + encodeURIComponent(fullAddress) +
+           "&trp=false&sprop=website:http://www.phoenixcommunityalliance.com"; 
+        console.log(url);
+        return url;
+      },
+
+      computeGoogleMapLink: function(fullAddress) {
+        return "https://www.google.com/maps?f=q&source=s_q&hl=en&geocode&q=" + encodeURIComponent(fullAddress);        
+      },
+
+
+    };
+</script>

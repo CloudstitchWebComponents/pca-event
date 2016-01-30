@@ -1,5 +1,17 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../google-map/google-map.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../google-map/google-map-search.html">
+<link rel="import" href="../iron-form/iron-form.html">
+<link rel="stylesheet" href="./bootstrap-grid.min.css" />
+<script src="../moment/moment.js"></script>
+
+<link rel="import" href="./event-behavior.html">
 
 <!--
 Example:
@@ -17,13 +29,7 @@ Example:
       .widget {
         color: #333;
       }
-      
-      p {
-        line-height: 1.7;
-        margin: 0 0 10px;
-        font-size: 1rem;
-      }           
-      
+            
       h1 {
         margin-top: 0;
         font-size: 36px;
@@ -76,81 +82,165 @@ Example:
         background: #fafafa;
         border: 1px solid #eee;
         margin: 30px 0; 
+        display: block;
+        overflow: hidden;
       }
+      
       .detail-block {
-        box-sizing: border-box;
-        display: inline-block;
-        float: left;
         margin: 0 0 20px;
         padding: 0 4%;
         text-align: left;
         vertical-align: top;
-        width: 33.3333%;
         zoom: 1;
       }
+            
+      .btn-cal {
+        background-color: #21759b;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        color: white;
+      }
+      
+      .btn-rsvp {
+        background-color: #E27575;
+        color: white;       
+      }
+      
+      .btn-rsvp-no {
+        background-color: #ddd;
+        color: black;       
+      }
+      
+      .spacer {
+        display: block;
+        height: 30px;
+        width: 10px;
+      }
+      
+      #rsvp {
+        min-width: 40%;
+      }
+      
+      #rsvp h3 {
+        background-color: #21759b;
+        color: white;
+        padding: 10px;
+        margin: 0 0 10px 0;
+      }
+      
+      paper-radio-button {
+        float: none;
+        clear: both;
+        display: block;
+      }
+      
+      paper-radio-group {
+        float: none;
+        clear: both;
+        display: block;
+      }
+      
+      .button-bar {
+        text-align: right;
+      }
+      
+      google-map {
+        border: 1px solid #aaa;
+        padding: 5px;
+        margin: 10px;
+      }
     </style>
-    <h1>{{title}}</h1>
-    <h2>
-      {{month}} {{day}}
-      <span hidden$={{!startTime}}>
-        {{startTime}}
-        <span hidden$={{!endTime}}>
-          - {{endTime}}
-        <span>
-      </span>
-    </h2>
-    <div>
-      {{description}}
-    </div>
-    <paper-button raised>RSVP</paper-button>
-    <paper-button raised class="cal" href="{{outlookLink}}" on-tap="goHref">+ Google Calendar</a>
-    <paper-button raised class="cal" href="{{googleCalLink}}" on-tap="goHref">+ iCal / Outlook</a>
-    <hr />
-    <div class="details block">
-      <div class="detail-block">
-        <h3>Details</h3>
-        <dl>
-          <dt>Date:</dt>
-          <dd>{{dateStr}}</dd>
-          <dt>Time:</dt>
-          <dd>{{timeStr}}<dd>
-          <dt>Event Category:</dt>
-          <dd>{{category}}<dd>
-        </dl>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1>{{title}}</h1>
+          <h2>{{dateStr}} <span hidden$="{{!timeStr}}"> @ </span>{{timeStr}}</h2>
+          <div>
+            {{description}}
+          </div>
+          <div class="spacer"></div>
+          <paper-button raised class="btn-rsvp" on-tap="showRsvp">RSVP</paper-button>
+          <div class="spacer"></div>
+          <paper-button raised class="btn-cal" on-tap="goGoogleCal">+ Google Calendar</paper-button>
+          <div class="spacer"></div>      
+        </div>
       </div>
-      <div class="detail=block">
-        <h3>Organizer</h3>
-        <dl>
-          <dt>Phone:</dt>
-          <dd>{{organizerPhone}}</dd>
-        </dl>
-      </div>       
-    </div>
-    <div class="block">
-      <div class="detail-block">
-        <h3>Venue</h3>
-        <p>{{venueName}}<p>
-        <p>{{venueStreet}}<br />{{venueCity}}, {{venueState}} {{venueZip}}</p>
-        <a href='{{googleMapLink}}'>Google Map</a>          
+      <div class="details row">
+        <div class="detail-block col-md-3 col-sm-12">
+          <h3>Details</h3>
+          <dl>
+            <dt>Date:</dt>
+            <dd>{{dateStr}}</dd>
+            <dt>Time:</dt>
+            <dd>{{timeStr}}<dd>
+            <dt>Event Category:</dt>
+            <dd>{{category}}<dd>
+          </dl>
+        </div>
+        <div class="detail-block col-md-3 col-sm-12">
+          <h3>Organizer</h3>
+          <dl>
+            <dt>Phone:</dt>
+            <dd>{{organizerPhone}}</dd>
+          </dl>
+        </div>       
       </div>
-      <div class="detail-block">
-        <google-map></google-map>
+      <div class="block row">
+        <div class="detail-block col-md-3 col-sm-12">
+          <h3>Venue</h3>
+          <p>{{venueName}}<p>
+          <p>{{venueStreet}}<br />{{venueCity}}, {{venueState}} {{venueZip}}</p>
+          <a href='{{googleMapLink}}'>Google Map</a>          
+        </div>
+        <div class="detail-block-two col-md-6 col-sm-12">
+          <google-map-search map="[[map]]" global-search="true" query="{{fullAddress}}" results="{{mapResults}}"></google-map-search>
+          <google-map map="{{map}}" style="width: 100%; height: 400px" fit-to-markers zoom="15">
+            <template is='dom-repeat' items="{{mapResults}}" as="marker">
+              <google-map-marker latitude="{{marker.latitude}}"
+                                  longitude="{{marker.longitude}}">
+                <h2>{{marker.name}}</h2>
+                <span>{{marker.formatted_address}}</span>
+              </google-map-marker>
+            </template>
+          </google-map>
+        </div>
       </div>
     </div>
+    
+    <paper-dialog modal id="rsvp">
+      <h3>Submit your RSVP</h3>
+      <p>We'll send you a email to confirm.</p>     
+      <form id="form" is="iron-form" method="POST" action="{{formUrl}}" class="rsvp-form" on-iron-form-presubmit="willSubmit" on-iron-form-response="onSubmit" on-irom-form-error="onSubmitError">
+        <input type="hidden" name="EventName" value$="{{title}}" />
+        <input type="hidden" name="EventDate" value$="{{date}}" />
+        <input type="hidden" name="EventStart" value$="{{startTime}}" />
+        <input type="hidden" name="EventEnd" value$="{{endTime}}" />
+        <input type="hidden" name="EventCategory" value$="{{category}}" />
+            
+        <input type="hidden" name="RSVPStatus" value$="{{rsvpstatus}}" />
+        <input type="hidden" name="RSVPDate" value$="{{currentDate}}" />
+        <input type="hidden" name="RSVPTime" value$="{{currentTime}}" />
 
-    <section class="rsvp-form">
-      <paper-input label="First Name"></paper-input>
-      <paper-input label="Last Name"></paper-input>
-      <paper-input label="Email"></paper-input>
-      <paper-input label="Phone"></paper-input>
-      <paper-input label="Business"></paper-input>
-      <paper-input label="Your Title"></paper-input>
-      <span>Not a PCA Member</span>
-      <span>PCA Member</span>
-      <span>Board Member</span>
-      <paper-button id="btn-attending" on-click="rsvp">Attending</paper-button>
-      <paper-button id="btn-not-attending" on-click="rsvp">Not Attending</paper-button>
-    </section>
+        <paper-input name="PersonFirstName" label="First Name"></paper-input>
+        <paper-input name="PersonLastName" label="Last Name"></paper-input>
+        <paper-input name="PersonEmail" label="Email"></paper-input>
+        <paper-input name="PersonPhone" label="Phone"></paper-input>
+        <paper-input name="PersonBusiness" label="Business"></paper-input>
+        <paper-input name="PersonTitle" label="Your Title"></paper-input>
+        <input type="hidden" name="PersonMembershipStatus" value$="{{membershipstatus}}" />
+
+        <p>I am:</p>
+        <paper-radio-group id="mSelect" selected="{{membershipstatus}}">
+          <paper-radio-button name="NotMember">Not a PCA Member</paper-radio-button>
+          <paper-radio-button name="Member">A PCA Member</paper-radio-button>
+          <paper-radio-button name="BoardMember">A Board Member</paper-radio-button>
+        </paper-radio-group>
+        <div class="button-bar">      
+          <paper-button raised class="btn-rsvp" id="btn-attending" on-click="submitComing">Attending</paper-button>
+          <paper-button raised class="btn-rsvp-no" id="btn-not-attending" on-click="submitNotComing">Not Attending</paper-button>
+        </div>
+      </form>
+    </paper-dialog>
 
   </template>
 
@@ -159,62 +249,87 @@ Example:
     Polymer({
 
       is: 'pca-event',
-
+      behaviors: [EventBehavior],
       properties: {       
-        title: { type: String },
-        month: { type: String },
-        day: { type: String },
-        startTime: { type: String },
-        endTime: { type: String },
-        description: { type: String },
-        organizerPhone: { type: String },
-        category: { type: String },
-        venueName: { type: String },
-        venueStreet: { type: String },
-        venueCity: { type: String },
-        venueState: { type: String },
-        venueZip: { type: String },
-
-        user: { type: String },
-        app: {type: String },
-        label: {type: String},
-        worksheet: {type: String},
+        title: { type: String, value: '' },
+        date: { type: String, value: '' },
+        startTime: { type: String, value: '' },
+        endTime: { type: String, value: '' },
+        description: { type: String, value: '' },
+        organizerPhone: { type: String, value: '' },
+        category: { type: String, value: '' },
+        venueName: { type: String, value: '' },
+        venueStreet: { type: String, value: '' },
+        venueCity: { type: String, value: '' },
+        venueState: { type: String, value: '' },
+        venueZip: { type: String, value: '' },
+        
+        rsvpstatus: { type: String, value: ''},
+        membershipstatus: { type: String, value: 'NotMember' },
+        
+        user: { type: String, value: '' },
+        app: {type: String, value: '' },
+        label: {type: String, value: ''},
+        worksheet: {type: String, value: ''},
                 
-        dateStr: { type: String, computed: 'computeDateStr(month, day)' },
-        timeStr: { type: String, computed: 'computeTimeStr(startTime, endTime)' },
-        googleMapLink: { type: String, computed: 'computeGoogleMapLink(venueName, venueStreet, venueCity, venueState, venueZip)' },
+        googleMapLink: { type: String, computed: 'computeGoogleMapLink(fullAddress)' },
         outlookLink: { type: String, computed: 'computeOutlookLink()' },
-        googleCalLink: { type: String, computed: 'computeGoogleCalLink()' },
-      },
-      
-      computeDateStr: function(month, day) {
-        return month + ' ' + day;
-      },
+        googleCalLink: { type: String, computed: 'computeGoogleCalLink(title, description, fullAddress, startMoment, endMoment)' },
+        fullAddress: { type: String, computed: 'computeFullAddress(venueName, venueStreet, venueCity, venueState,  venueZip)' },
+        startMoment: { type: Object, computed: 'computeMoment(date, startTime)'},
+        endMoment: { type: Object, computed: 'computeMoment(date, endTime)'},
+        dateStr: { type: String, computed: 'computeDateStr(startMoment)' },
+        timeStr: { type: String, computed: 'computeTimeStr(startMoment, endMoment)' },
+        formUrl: { type: String, computed: 'computeFormUrl(user, app, label, worksheet)'},
+        currentDate: { type: String, valuf: function() {return moment().format('MM/DD/YYYY');} },
+        currentTime: { type: String, valuf: function() {return moment().format('h:mm:ss a');} }
 
-      computeTimeStr: function(startTime, endTime) {
-        return startTime + ' - ' + endTime;
       },
-       
-      computeGoogleMapLink: function(venueName, venueStreet, venueCity, venueState, venueZip) {
-        
-      },
-
-      computeGoogleCalLink: function() {
-        
+                                    
+      computeFormUrl: function(user, app, label, worksheet) {
+        var url = "//api.cloudstitch.com/" + user + "/" + app + "/datasource/" + label;
+        if (worksheet) {
+          url += "/" + worksheet;
+        }
+        return url;
       },
       
       computeOutlookLink: function() {
         
       },
+            
+      showRsvp: function() {
+        this.$.rsvp.open();
+      },
+            
+      goGoogleCal: function(e) {
+        window.location = this.googleCalLink;
+      },
       
-      goHref: function() {
+      submitComing: function() {
+        this.rsvpstatus = 'coming';
+        this.$.form.submit();        
+        this.$.rsvp.close();
+      },
+
+      submitNotComing: function() {
+        this.rsvpstatus = 'notComing';
+        this.$.form.submit();        
+        this.$.rsvp.close();
+      },
+      
+      willSubmit: function() {
+          debugger;
+      },
+      
+      onSubmit: function() {
         
       },
       
-      rsvpClick: function() {
+      onSubmitError: function() {
         
       }
-
+           
     });
 
   </script>
